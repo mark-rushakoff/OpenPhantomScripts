@@ -18,26 +18,28 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-// TODO: write to stderr; figure out why sometimes nothing executes
+var fs = require("fs");
 var system = require("system");
 var args = system.args;
 
+function printError(message) {
+    fs.write("/dev/stderr", message + "\n", "w");
+}
+
 if (args.length !== 2) {
-    console.log("Usage: " + args[0] + " URL");
+    printError("Usage: " + args[0] + " URL");
     phantom.exit(1);
 }
 
-var page = require('webpage').create();
+var page = require("webpage").create();
 
 var hasQUnit = false;
 var attachedDoneCallback = false;
 page.onResourceReceived = function() {
     if (hasQUnit) {
-        delete page.onResourceReceived;
-
         // Without this guard, I was occasionally seeing the done handler
-        // pushed onto the array multiple times -- maybe the function
-        // was queued up several times?
+        // pushed onto the array multiple times -- it looks like the
+        // function was queued up several times, depending on the server.
         if (!attachedDoneCallback) {
             attachedDoneCallback = true;
             page.evaluate(function() {
@@ -69,12 +71,10 @@ page.open(url, function(success) {
             if (page.evaluate(function() {return window.phantomComplete;})) {
                 var failures = page.evaluate(function() {return window.phantomResults.failed;});
                 phantom.exit(failures);
-            } else {
-                console.log("still running...");
             }
         }, 250);
     } else {
-        console.log("Failure opening " + url);
+        printError("Failure opening " + url);
         phantom.exit(1);
     }
 });
