@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'webrick'
 require 'net/http'
-require 'rspec'
+
+require 'bundler'
+Bundler.require(:default, :development)
 
 module OpsHelper
   VENDOR_BASE = File.expand_path('./vendor/', File.dirname(__FILE__))
@@ -51,5 +53,12 @@ RSpec.configure do |config|
       Process.kill('TERM', server_pid)
     end
     OpsHelper::ensure_server_started
+  end
+end
+
+shared_examples_for 'correct failures' do
+  it 'fails when no url is given' do
+    %x{phantomjs #{script}}
+    $?.exitstatus.should == 1
   end
 end
