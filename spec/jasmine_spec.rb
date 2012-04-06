@@ -1,11 +1,9 @@
 require 'spec_helper'
 
 describe 'phantom-jasmine.js' do
-  script = File.expand_path('../phantom-jasmine.js', File.dirname(__FILE__))
+  let(:script) { File.expand_path('../phantom-jasmine.js', File.dirname(__FILE__)) }
 
-  it 'works against the sample Jasmine test suite' do
-    lines = %x{phantomjs #{script} "http://localhost:#{OpsHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
-    $?.exitstatus.should == 0
+  def assert_output(lines)
     lines.length.should == 5
     lines[0].should == 'Tests passed:  5'
     lines[1].should == 'Tests skipped: 0'
@@ -14,7 +12,15 @@ describe 'phantom-jasmine.js' do
     lines[4].should match /^Runtime \(ms\):  \d+$/
   end
 
-  it_behaves_like 'correct failures' do
-    let(:script) { script }
+  it 'works against the sample Jasmine test suite' do
+    lines = %x{phantomjs #{script} "http://localhost:#{OpsHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
+    $?.exitstatus.should == 0
+    assert_output(lines)
+  end
+
+  it_behaves_like 'correct failures'
+
+  it_behaves_like 'from local files' do
+    let(:absolute_path_to_test_file) { "#{OpsHelper::VENDOR_BASE}/jasmine-simple-example/test.html" }
   end
 end

@@ -6,6 +6,16 @@ The scripts in PhantomJS's `examples` directory have no explicit license attache
 I wrote these scripts as an explicitly MIT-licensed alternative that queries the backing test runner rather than being dependent on the result of the runner's DOM manipulations.
 Hopefully, this means you can drop my scripts into your project and just not worry about PhantomJS's licensing at all.
 
+## Usage
+
+These scripts can run against local files:
+
+    phantomjs phantom-${runner}.js file://$(pwd)/path/to/test.html
+
+Or they can run against a real server:
+
+    phantomjs phantom-${runner}.js http://${server}:${port}/path/to/test.html
+
 ----
 
 Coming in the future:

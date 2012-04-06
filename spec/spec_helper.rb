@@ -61,3 +61,11 @@ shared_examples_for 'correct failures' do
     $?.exitstatus.should == 1
   end
 end
+
+shared_examples_for 'from local files' do
+  it 'can read files off disk' do
+    lines = %x{phantomjs #{script} file://#{absolute_path_to_test_file}}.lines.map(&:chomp)
+    $?.exitstatus.should == 0
+    assert_output(lines)
+  end
+end
