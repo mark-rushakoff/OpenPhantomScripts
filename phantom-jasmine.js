@@ -1,0 +1,95 @@
+// Copyright (c) 2012 Mark Rushakoff
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
+
+var fs = require("fs");
+var args, url, lengthOkay, appName, system;
+try {
+    system = require("system");
+    // if we got here, we are on PhantomJS 1.5+
+    args = system.args;
+    lengthOkay = (args.length === 2);
+    appName = args[0];
+    url = args[1];
+} catch (e) {
+    // otherwise, assume PhantomJS 1.4
+    args = phantom.args;
+    lengthOkay = (args.length === 1);
+    appName = 'phantom-qunit.js'
+    url = args[0];
+}
+
+if (!lengthOkay) {
+    printError("Usage: " + appName + " URL");
+    phantom.exit(1);
+}
+
+function printError(message) {
+    fs.write("/dev/stderr", message + "\n", "w");
+}
+
+var page = require("webpage").create();
+
+var hasJasmine = false;
+var attachedDoneCallback = false;
+page.onResourceReceived = function() {
+    if (hasJasmine) {
+        // Without this guard, I was occasionally seeing the done handler
+        // pushed onto the array multiple times -- it looks like the
+        // function was queued up several times, depending on the server.
+        if (!attachedDoneCallback) {
+            attachedDoneCallback = true;
+            page.evaluate(function() {
+                var reporter = new window.jasmine.Reporter();
+                reporter.reportRunnerResults = function(runner) {
+                    // TODO: get results from runner
+                    // console.log("Tests passed: " + obj.passed);
+                    // console.log("Tests failed: " + obj.failed);
+                    // console.log("Total: " + obj.total);
+                    // console.log("Runtime (ms): " + obj.runtime);
+                    window.phantomComplete = true;
+                    window.phantomResults = obj;
+                }
+                window.jasmine.getEnv().addReporter(reporter);
+            });
+        }
+    } else {
+        hasJasmine = page.evaluate(function() {
+            return !!window.jasmine;
+        });
+    }
+}
+
+page.onConsoleMessage = function(message) {
+    console.log(message);
+}
+
+page.open(url, function(success) {
+    if (success === "success") {
+        setInterval(function() {
+            if (page.evaluate(function() {return window.phantomComplete;})) {
+                var failures = page.evaluate(function() {return window.phantomResults.failed;});
+                phantom.exit(failures);
+            }
+        }, 250);
+    } else {
+        printError("Failure opening " + url);
+        phantom.exit(1);
+    }
+});
