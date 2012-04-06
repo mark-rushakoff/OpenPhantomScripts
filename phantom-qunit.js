@@ -59,7 +59,7 @@ page.onResourceReceived = function() {
                 window.QUnit.config.done.push(function(obj) {
                     console.log("Tests passed: " + obj.passed);
                     console.log("Tests failed: " + obj.failed);
-                    console.log("Total: " + obj.total);
+                    console.log("Total tests:  " + obj.total);
                     console.log("Runtime (ms): " + obj.runtime);
                     window.phantomComplete = true;
                     window.phantomResults = obj;

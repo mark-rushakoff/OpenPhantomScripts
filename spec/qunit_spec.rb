@@ -10,7 +10,7 @@ describe 'phantom-qunit.js' do
     # Correct for current specs in Underscore according to submodule SHA
     lines[0].should == 'Tests passed: 477'
     lines[1].should == 'Tests failed: 0'
-    lines[2].should == 'Total: 477'
+    lines[2].should == 'Total tests:  477'
     lines[3].should match /^Runtime \(ms\): \d+$/
   end
 
