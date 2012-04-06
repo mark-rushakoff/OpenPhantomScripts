@@ -5,7 +5,7 @@ require 'net/http'
 require 'bundler'
 Bundler.require(:default, :development)
 
-module OpsHelper
+module OpenPhantomHelper
   VENDOR_BASE = File.expand_path('./vendor/', File.dirname(__FILE__))
   PORT = 5678
 

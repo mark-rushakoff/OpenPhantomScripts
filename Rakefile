@@ -12,7 +12,7 @@ end
 
 def start_server
   require 'spec_helper'
-  OpsHelper::start_server_once
+  OpenPhantomHelper::start_server_once
 end
 
 task :start_server_and_run_specs do

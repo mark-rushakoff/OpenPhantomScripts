@@ -13,7 +13,7 @@ describe 'phantom-qunit.js' do
   end
 
   it 'works against the Underscore.js test suite' do
-    lines = %x{phantomjs #{script} "http://localhost:#{OpsHelper::PORT}/underscore/test/test.html"}.lines.map(&:chomp)
+    lines = %x{phantomjs #{script} "http://localhost:#{OpenPhantomHelper::PORT}/underscore/test/test.html"}.lines.map(&:chomp)
     $?.exitstatus.should == 0
     assert_output(lines)
   end
@@ -21,6 +21,6 @@ describe 'phantom-qunit.js' do
   it_behaves_like 'correct failures'
 
   it_behaves_like 'from local files' do
-    let(:absolute_path_to_test_file) { "#{OpsHelper::VENDOR_BASE}/underscore/test/test.html" }
+    let(:absolute_path_to_test_file) { "#{OpenPhantomHelper::VENDOR_BASE}/underscore/test/test.html" }
   end
 end

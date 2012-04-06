@@ -13,7 +13,7 @@ describe 'phantom-jasmine.js' do
   end
 
   it 'works against the sample Jasmine test suite' do
-    lines = %x{phantomjs #{script} "http://localhost:#{OpsHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
+    lines = %x{phantomjs #{script} "http://localhost:#{OpenPhantomHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
     $?.exitstatus.should == 0
     assert_output(lines)
   end
@@ -21,6 +21,6 @@ describe 'phantom-jasmine.js' do
   it_behaves_like 'correct failures'
 
   it_behaves_like 'from local files' do
-    let(:absolute_path_to_test_file) { "#{OpsHelper::VENDOR_BASE}/jasmine-simple-example/test.html" }
+    let(:absolute_path_to_test_file) { "#{OpenPhantomHelper::VENDOR_BASE}/jasmine-simple-example/test.html" }
   end
 end
