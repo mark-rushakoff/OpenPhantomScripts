@@ -1,3 +1,3 @@
 source :rubygems
 
-gem('minitest', '~> 2')
+gem('rspec', '~> 2.9')
