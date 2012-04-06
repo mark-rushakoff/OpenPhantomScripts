@@ -56,16 +56,47 @@ page.onResourceReceived = function() {
         if (!attachedDoneCallback) {
             attachedDoneCallback = true;
             page.evaluate(function() {
-                var reporter = new window.jasmine.Reporter();
-                reporter.reportRunnerResults = function(runner) {
-                    // TODO: get results from runner
-                    // console.log("Tests passed: " + obj.passed);
-                    // console.log("Tests failed: " + obj.failed);
-                    // console.log("Total: " + obj.total);
-                    // console.log("Runtime (ms): " + obj.runtime);
-                    window.phantomComplete = true;
-                    window.phantomResults = obj;
-                }
+                var reporter = {
+                    numPassed: 0,
+                    numFailed: 0,
+                    numSkipped: 0,
+
+                    reportRunnerStarting: function() {
+                        this.startTime = (new Date()).getTime();
+                    },
+
+                    reportSpecResults: function(spec) {
+                        var results = spec.results();
+                        if (results.skipped) {
+                            this.numSkipped++;
+                        } else if (results.passed()) {
+                            this.numPassed++;
+                        } else {
+                            this.numFailed++;
+                        }
+                    },
+
+                    reportRunnerResults: function() {
+                        var totalTime = (new Date()).getTime() - this.startTime;
+                        var totalTests = (this.numPassed + this.numSkipped + this.numFailed);
+                        console.log("Tests passed:  " + this.numPassed);
+                        console.log("Tests skipped: " + this.numSkipped);
+                        console.log("Tests failed:  " + this.numFailed);
+                        console.log("Total tests:   " + totalTests);
+                        console.log("Runtime (ms):  " + totalTime);
+                        window.phantomComplete = true;
+                        window.phantomResults = {
+                            numPassed: this.numPassed,
+                            numSkipped: this.numSkipped,
+                            numFailed: this.numFailed,
+                            totalTests: totalTests,
+                            totalTime: totalTime
+                        };
+                    }
+                };
+
+                reporter.prototype = window.jasmine.Reporter.prototype;
+
                 window.jasmine.getEnv().addReporter(reporter);
             });
         }
@@ -84,7 +115,7 @@ page.open(url, function(success) {
     if (success === "success") {
         setInterval(function() {
             if (page.evaluate(function() {return window.phantomComplete;})) {
-                var failures = page.evaluate(function() {return window.phantomResults.failed;});
+                var failures = page.evaluate(function() {return window.phantomResults.numFailed;});
                 phantom.exit(failures);
             }
         }, 250);
