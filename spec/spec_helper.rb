@@ -14,8 +14,11 @@ module OpsHelper
       return if @started
       @started = true
       assert_has_phantomjs
-      start_server
+      server_pid = start_server
       ensure_server_started
+      at_exit do
+        Process.kill('TERM', server_pid)
+      end
     end
 
     def assert_has_phantomjs
@@ -52,8 +55,6 @@ module OpsHelper
     end
   end
 end
-
-OpsHelper::start_server_once
 
 shared_examples_for 'correct failures' do
   it 'fails when no url is given' do
