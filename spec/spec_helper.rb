@@ -10,6 +10,14 @@ module OpsHelper
   PORT = 5678
 
   class << self
+    def start_server_once
+      return if @started
+      @started = true
+      assert_has_phantomjs
+      start_server
+      ensure_server_started
+    end
+
     def assert_has_phantomjs
       raise 'Could not locate phantomjs binary!' unless system('which phantomjs')
     end
@@ -45,16 +53,7 @@ module OpsHelper
   end
 end
 
-RSpec.configure do |config|
-  config.before(:all) do
-    OpsHelper::assert_has_phantomjs
-    server_pid = OpsHelper::start_server
-    at_exit do
-      Process.kill('TERM', server_pid)
-    end
-    OpsHelper::ensure_server_started
-  end
-end
+OpsHelper::start_server_once
 
 shared_examples_for 'correct failures' do
   it 'fails when no url is given' do
