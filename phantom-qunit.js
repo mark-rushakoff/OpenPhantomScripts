@@ -19,16 +19,29 @@
 // IN THE SOFTWARE.
 
 var fs = require("fs");
-var system = require("system");
-var args = system.args;
+var args, url, lengthOkay, appName, system;
+try {
+    system = require("system");
+    // if we got here, we are on PhantomJS 1.5+
+    args = system.args;
+    lengthOkay = (args.length === 2);
+    appName = args[0];
+    url = args[1];
+} catch (e) {
+    // otherwise, assume PhantomJS 1.4
+    args = phantom.args;
+    lengthOkay = (args.length === 1);
+    appName = 'phantom-qunit.js'
+    url = args[0];
+}
+
+if (!lengthOkay) {
+    printError("Usage: " + appName + " URL");
+    phantom.exit(1);
+}
 
 function printError(message) {
     fs.write("/dev/stderr", message + "\n", "w");
-}
-
-if (args.length !== 2) {
-    printError("Usage: " + args[0] + " URL");
-    phantom.exit(1);
 }
 
 var page = require("webpage").create();
@@ -64,7 +77,6 @@ page.onConsoleMessage = function(message) {
     console.log(message);
 }
 
-var url = args[1];
 page.open(url, function(success) {
     if (success === "success") {
         setInterval(function() {
