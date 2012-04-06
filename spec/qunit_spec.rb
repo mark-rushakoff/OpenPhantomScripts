@@ -6,7 +6,7 @@ SCRIPT = File.expand_path('../phantom-qunit.js', File.dirname(__FILE__))
 
 describe 'phantom-qunit.js' do
   it 'works against the Underscore.js test suite' do
-    lines = %x{phantomjs #{SCRIPT} 'http://localhost:5678/underscore/test/test.html'}.lines.map(&:chomp)
+    lines = %x{phantomjs #{SCRIPT} "http://localhost:#{OpsHelper::PORT}/underscore/test/test.html"}.lines.map(&:chomp)
     $?.exitstatus.should == 0
     lines.length.should == 4
     # Correct for current specs in Underscore according to submodule SHA
