@@ -4,3 +4,6 @@
 [submodule "spec/vendor/jasmine-simple-example"]
 	path = spec/vendor/jasmine-simple-example
 	url = git://github.com/mark-rushakoff/jasmine-simple-example.git
+[submodule "spec/vendor/jasmine-skip-fail"]
+	path = spec/vendor/jasmine-skip-fail
+	url = git://github.com/mark-rushakoff/jasmine-simple-example.git

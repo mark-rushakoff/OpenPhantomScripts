@@ -22,5 +22,6 @@ describe 'phantom-jasmine.js' do
 
   it_behaves_like 'from local files' do
     let(:absolute_path_to_test_file) { "#{OpenPhantomHelper::VENDOR_BASE}/jasmine-simple-example/test.html" }
+    let(:expected_exit_status) { 0 }
   end
 end
