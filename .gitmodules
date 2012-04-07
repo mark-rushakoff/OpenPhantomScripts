@@ -7,3 +7,6 @@
 [submodule "spec/vendor/jasmine-skip-fail"]
 	path = spec/vendor/jasmine-skip-fail
 	url = git://github.com/mark-rushakoff/jasmine-simple-example.git
+[submodule "spec/vendor/qunit-fail"]
+	path = spec/vendor/qunit-fail
+	url = git://github.com/mark-rushakoff/qunit-fail-demo.git
