@@ -1,3 +1,6 @@
+// Part of OpenPhantomScripts
+// http://github.com/mark-rushakoff/OpenPhantomScripts
+
 // Copyright (c) 2012 Mark Rushakoff
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
