@@ -46,16 +46,14 @@ function printError(message) {
 
 var page = require("webpage").create();
 
-var hasQUnit = false;
 var attachedDoneCallback = false;
 page.onResourceReceived = function() {
-    if (hasQUnit) {
-        // Without this guard, I was occasionally seeing the done handler
-        // pushed onto the array multiple times -- it looks like the
-        // function was queued up several times, depending on the server.
-        if (!attachedDoneCallback) {
-            attachedDoneCallback = true;
-            page.evaluate(function() {
+    // Without this guard, I was occasionally seeing the done handler
+    // pushed onto the array multiple times -- it looks like the
+    // function was queued up several times, depending on the server.
+    if (!attachedDoneCallback) {
+        attachedDoneCallback = page.evaluate(function() {
+            if (window.QUnit) {
                 window.QUnit.config.done.push(function(obj) {
                     console.log("Tests passed: " + obj.passed);
                     console.log("Tests failed: " + obj.failed);
@@ -64,11 +62,11 @@ page.onResourceReceived = function() {
                     window.phantomComplete = true;
                     window.phantomResults = obj;
                 });
-            });
-        }
-    } else {
-        hasQUnit = page.evaluate(function() {
-            return !!window.QUnit;
+
+                return true;
+            }
+
+            return false;
         });
     }
 }
@@ -79,6 +77,11 @@ page.onConsoleMessage = function(message) {
 
 page.open(url, function(success) {
     if (success === "success") {
+        if (!attachedDoneCallback) {
+            printError("Phantom callbacks not attached in time.  See http://github.com/mark-rushakoff/OpenPhantomScripts/issues/1");
+            phantom.exit(1);
+        }
+
         setInterval(function() {
             if (page.evaluate(function() {return window.phantomComplete;})) {
                 var failures = page.evaluate(function() {return window.phantomResults.failed;});
