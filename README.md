@@ -12,11 +12,21 @@ These scripts can run against local files:
 
     phantomjs phantom-${runner}.js file://$(pwd)/path/to/test.html
 
+    phantomjs phantom-${runner}.js ./path/to/test.html
+
 Or they can run against a real server:
 
     phantomjs phantom-${runner}.js http://${server}:${port}/path/to/test.html
 
 I'm currently trying to keep it so that you can just grab `phantom-qunit.js` or `phantom-jasmine.js` and drop that in your script along with a .travis.yml to get a really easy CI up and running.
+
+Want to run your Javascript-based tests under PhantomJs on [Travis CI](http://travis-ci.org/)?
+After you go through [Getting Started with Travis](http://about.travis-ci.org/docs/user/getting-started/), just follow these few easy steps:
+
+* copy `travis.yml.example` to your repository root as `.travis.yml`
+* copy `phantom-qunit.js` to your repo root as `.phantom-qunit.js` (or use `phantom-jasmine.js`)
+* modify your `.travis.yml` to point towards your `test.html` or equivalent
+* push!
 
 ### Known bugs
 
