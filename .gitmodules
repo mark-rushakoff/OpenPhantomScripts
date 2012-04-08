@@ -10,3 +10,6 @@
 [submodule "spec/vendor/qunit-fail"]
 	path = spec/vendor/qunit-fail
 	url = git://github.com/mark-rushakoff/qunit-fail-demo.git
+[submodule "spec/vendor/mocha-example"]
+	path = spec/vendor/mocha-example
+	url = git://github.com/mark-rushakoff/mocha-example.git
