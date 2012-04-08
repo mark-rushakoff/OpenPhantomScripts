@@ -2,7 +2,7 @@
 # since that's probably the most likely Travis worker to be available
 language: ruby
 rvm:
-  - 1.8.7
+  - 1.9.3
 notifications:
   email: false
 before_script:
