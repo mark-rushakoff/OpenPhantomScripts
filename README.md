@@ -24,14 +24,16 @@ Want to run your Javascript-based tests under PhantomJs on [Travis CI](http://tr
 After you go through [Getting Started with Travis](http://about.travis-ci.org/docs/user/getting-started/), just follow these few easy steps:
 
 * copy `travis.yml.example` to your repository root as `.travis.yml`
-* copy `phantom-qunit.js` to your repo root as `.phantom-qunit.js` (or use `phantom-jasmine.js`)
-* modify your `.travis.yml` to point towards your `test.html` or equivalent
+* copy `phantom-${runner}.js` to your repo root as `.phantom-${runner}.js` (substituting `${runner}` with `qunit`, `jasmine`, or `mocha`)
+* modify your `.travis.yml` to use the right runner and point towards your `test.html` or equivalent
 * push!
 
 ### Known bugs
 
-The scripts hook into Phantom's resourceReceived event, which is triggered after every resource load (e.g. script tag, image tags); in that hook, we check for the presence of the test object (`window.QUnit` or `window.jasmine`).
-If `qunit.js` or `jasmine.js` is too close to one of the last resources in the page, the script will not have been evaluated by the time that the resourceReceived event is triggered, resulting in Phantom never attaching the watcher defined in the script.
+The scripts hook into Phantom's resourceReceived event, which is triggered after every resource load (e.g. script tag, image tags); in that hook, we check for the presence of the test object (`window.QUnit`, `window.jasmine`, or `window.mocha`).
+If `qunit.js` or `jasmine.js` or `mocha.js` is too close to one of the last resources in the page, the script will not have been evaluated by the time that the `resourceReceived` event is triggered, resulting in Phantom never attaching the watcher defined in the script (see (Issue #1)[http://github.com/mark-rushakoff/OpenPhantomScripts/issues/1]).
+
+`phantom-mocha.js` depends on the test script calling `mocha.run` directly, which is probably but not necessarily always the case.
 
 ----
 

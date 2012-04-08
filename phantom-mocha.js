@@ -57,11 +57,13 @@ page.onResourceReceived = function() {
     if (!attachedDoneCallback) {
         attachedDoneCallback = page.evaluate(function() {
             if (window.mocha) {
-                // Unfortunately, there's no easy hook into Mocha's results like
-                // there is in QUnit or Jasmine.  But, mocha.run takes an optional
-                // callback function.  We can tap into that, which is admittedly 
-                // hacky, but it's the best approach I can see since mocha actually 
-                // doesn't do much in the way of exposing state.
+                // Unfortunately, there's no easy hook into Mocha's results
+                // like there is in QUnit or Jasmine.  But, since mocha.run
+                // returns the runner (after it's been started), we can wrap
+                // the original mocha.run and tap into the runner to set up our
+                // hooks.  This has the side effect of making this script
+                // useless if the test doesn't use mocha.run to start the
+                // tests.
                 var oldRun = window.mocha.run;
                 window.mocha.run = function(fn) {
                     var runner = oldRun(fn);
@@ -102,7 +104,6 @@ page.open(url, function(success) {
     if (success === "success") {
         if (!attachedDoneCallback) {
             printError("Phantom callbacks not attached in time.  See http://github.com/mark-rushakoff/OpenPhantomScripts/issues/1");
-            printError("Or this may happen if you aren't starting your tests by calling `mocha.run()`.");
             phantom.exit(1);
         }
 
