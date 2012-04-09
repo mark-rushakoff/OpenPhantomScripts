@@ -6,7 +6,10 @@ The scripts in PhantomJS's `examples` directory have no explicit license attache
 I wrote these scripts as an explicitly MIT-licensed alternative that queries the backing test runner rather than being dependent on the result of the runner's DOM manipulations.
 Hopefully, this means you can drop my scripts into your project and immediately start running your browser-based tests from the console -- as a bonus, if you have any concerns about license virality, these scripts should be far-removed enough from Phantom and Webkit to make you feel safe to include OpenPhantomScripts in your project.
 
-## Usage
+## Local usage
+
+If you plan on running your tests in phantomjs locally, you can copy `phantom-${runner}.js` into your repository or wherever is convenient for you.
+If you don't intend on running the tests in phantomjs locally, you can just have Travis CI automatically download the stable version of the correct test runner -- read ahead for directions.
 
 These scripts can run against local files:
 
@@ -18,17 +21,25 @@ Or they can run against a real server:
 
     phantomjs phantom-${runner}.js http://${server}:${port}/path/to/test.html
 
-I'm currently trying to keep it so that you can just grab `phantom-qunit.js` or `phantom-jasmine.js` and drop that in your project along with a .travis.yml to get a really easy CI up and running.
+## Super-easy Travis integration
 
 Want to run your Javascript-based tests under PhantomJs on [Travis CI](http://travis-ci.org/)?
-After you go through [Getting Started with Travis](http://about.travis-ci.org/docs/user/getting-started/), just follow these few easy steps:
+First, go through [Getting Started with Travis](http://about.travis-ci.org/docs/user/getting-started/).
 
-* copy `travis.yml.example` to your repository root as `.travis.yml`
+### If you want to check phantom-xxx.js in to your repo
+
+* copy `travis.yml.example-include` to your repository root as `.travis.yml`
 * copy `phantom-${runner}.js` to your repo root as `.phantom-${runner}.js` (substituting `${runner}` with `qunit`, `jasmine`, or `mocha`)
 * modify your `.travis.yml` to use the right runner and point towards your `test.html` or equivalent
 * push!
 
-### Known bugs
+### If you want Travis CI to automatically use the stable version of phantom-xxx.js
+
+* copy `travis.yml.example-download` to your repository root as `.travis.yml`
+* modify your `.travis.yml` to use the right runner and point towards your `test.html` or equivalent
+* push!
+
+## Known issues
 
 The scripts hook into Phantom's resourceReceived event, which is triggered after every resource load (e.g. script tag, image tags); in that hook, we check for the presence of the test object (`window.QUnit`, `window.jasmine`, or `window.mocha`).
 If `qunit.js` or `jasmine.js` or `mocha.js` is too close to one of the last resources in the page, the script will not have been evaluated by the time that the `resourceReceived` event is triggered, resulting in Phantom never attaching the watcher defined in the script (see [Issue #1](https://github.com/mark-rushakoff/OpenPhantomScripts/issues/1)).
