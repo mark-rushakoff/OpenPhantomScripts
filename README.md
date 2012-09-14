@@ -46,6 +46,13 @@ If `qunit.js` or `jasmine.js` or `mocha.js` is too close to one of the last reso
 
 `phantom-mocha.js` depends on the test script calling `mocha.run` directly, which is probably but not necessarily always the case.
 
+## Alternatives
+
+If OpenPhantomScripts isn't quite the right tool for your job, check out these alternatives:
+
+* [mocha-phantomjs](http://metaskills.net/mocha-phantomjs/)
+* [grunt](https://github.com/cowboy/grunt)
+
 ----
 
 Coming in the future:
