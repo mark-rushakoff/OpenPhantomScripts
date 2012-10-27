@@ -49,29 +49,25 @@ function printError(message) {
 
 var page = require("webpage").create();
 
-var attachedDoneCallback = false;
+function isPhantomAttached() {
+    return page.evaluate(function() {return window.phantomAttached})
+}
+
 page.onResourceReceived = function() {
-    // Without this guard, I was occasionally seeing the done handler
-    // pushed onto the array multiple times -- it looks like the
-    // function was queued up several times, depending on the server.
-    if (!attachedDoneCallback) {
-        attachedDoneCallback = page.evaluate(function() {
-            if (window.QUnit) {
-                window.QUnit.config.done.push(function(obj) {
-                    console.log("Tests passed: " + obj.passed);
-                    console.log("Tests failed: " + obj.failed);
-                    console.log("Total tests:  " + obj.total);
-                    console.log("Runtime (ms): " + obj.runtime);
-                    window.phantomComplete = true;
-                    window.phantomResults = obj;
-                });
-
-                return true;
-            }
-
-            return false;
-        });
-    }
+    //attach the done callback to QUnit if not already done.
+    page.evaluate(function() {
+        if (window.QUnit && !window.phantomAttached) {
+            window.QUnit.config.done.push(function(obj) {
+                console.log("Tests passed: " + obj.passed);
+                console.log("Tests failed: " + obj.failed);
+                console.log("Total tests:  " + obj.total);
+                console.log("Runtime (ms): " + obj.runtime);
+                window.phantomComplete = true;
+                window.phantomResults = obj;
+            });
+            window.phantomAttached = true;
+        }
+    });
 }
 
 page.onConsoleMessage = function(message) {
@@ -80,7 +76,7 @@ page.onConsoleMessage = function(message) {
 
 page.open(url, function(success) {
     if (success === "success") {
-        if (!attachedDoneCallback) {
+        if (!isPhantomAttached()) {
             printError("Phantom callbacks not attached in time.  See http://github.com/mark-rushakoff/OpenPhantomScripts/issues/1");
             phantom.exit(1);
         }
