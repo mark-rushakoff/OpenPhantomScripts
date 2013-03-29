@@ -21,5 +21,3 @@ script:
   - "wget https://raw.github.com/mark-rushakoff/OpenPhantomScripts/master/phantom-qunit.js"
   # Make sure to change test/test.html to the path to your test page
   - "phantomjs phantom-qunit.js test/test.html"
-  # Below example allows more flexibility when running tests that require ajax/jsonp
-  # - "phantomjs --local-to-remote-url-access=true --web-security=false phantom-jasmine.js test/test.html"
