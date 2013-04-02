@@ -49,10 +49,6 @@ function printError(message) {
 
 var page = require("webpage").create();
 
-// options that make ajax/cross domain less painful
-page.settings.localToRemoteUrlAccessEnabled = true;
-page.settings.webSecurityEnabled = false;
-
 var attachedDoneCallback = false;
 page.onResourceReceived = function() {
     // Without this guard, I was occasionally seeing the done handler
