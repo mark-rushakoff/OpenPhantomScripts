@@ -39,6 +39,14 @@ First, go through [Getting Started with Travis](http://about.travis-ci.org/docs/
 * modify your `.travis.yml` to use the right runner and point towards your `test.html` or equivalent
 * push!
 
+## If you are experiencing issues with asynchronous code
+
+PhantomJS supports asynchronous calls out of the box, but has some default security features that can cause headaches. In travis.yml.example-download and travis.yml.example-include you will find an override line that will hopefully solve the issues you are having.
+
+	# - "phantomjs --local-to-remote-url-access=true --web-security=false phantom-qunit.js test/test.html"
+
+To use this code just follow the instructions and replace the necessary line with that line. Change qunit to jasmine or mocha if necessary and modify the test/test.html path to point to your test file.
+
 ## Known issues
 
 The scripts hook into Phantom's resourceReceived event, which is triggered after every resource load (e.g. script tag, image tags); in that hook, we check for the presence of the test object (`window.QUnit`, `window.jasmine`, or `window.mocha`).

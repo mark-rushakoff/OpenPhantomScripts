@@ -19,3 +19,7 @@ script:
   # You can copy phantom-xxx.js as .phantom-xxx.js to keep it semi-hidden
   # Make sure to change test/test.html to the path to your test page
   - "phantomjs .phantom-qunit.js test/test.html"
+  # Swap line 21 above for line 25 below (removing the #) if you are experiencing issues with asynchronous requests.
+  # See https://github.com/ariya/phantomjs/wiki/API-Reference-WebPage#settings-object for more information.
+  # Make sure to change test/test.html to the path to your test page.
+  # - "phantomjs --local-to-remote-url-access=true --web-security=false phantom-qunit.js test/test.html"
