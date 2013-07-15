@@ -11,7 +11,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 def start_server
-  require 'spec_helper'
+  require File.join(File.dirname(__FILE__), 'spec', 'spec_helper.rb')
   OpenPhantomHelper::start_server_once
 end
 
