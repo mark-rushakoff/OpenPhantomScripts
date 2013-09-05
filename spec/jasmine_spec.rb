@@ -13,7 +13,7 @@ describe 'phantom-jasmine.js' do
   end
 
   it 'works against the sample Jasmine test suite' do
-    lines = %x{phantomjs #{script} "http://localhost:#{OpenPhantomHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
+    lines = %x{phantomjs --local-to-remote-url-access=true #{script} "http://localhost:#{OpenPhantomHelper::PORT}/jasmine-simple-example/test.html"}.lines.map(&:chomp)
     $?.exitstatus.should == 0
     assert_output(lines)
   end
