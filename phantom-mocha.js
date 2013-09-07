@@ -54,29 +54,22 @@ function isPhantomAttached() {
 }
 
 page.onResourceReceived = function() {
-    //attach the end event handler to all Mocha.Runner instances
+    //attach the end event handler to all mocha.Runner instances
     page.evaluate(function() {
-        if (!window.Mocha || window.phantomAttached) return;
+        if (!window.mocha || window.phantomAttached) return;
 
         (function () {
-            this.on("fail", function (test) {
+            this.on("fail", function (test, err) {
                 var current = test, title = [];
                 do { title.push(current.title) } while (current = current.parent);
                 title = title.reverse().slice(1).join(' ');
-                console.log(title + ":\n" + test.err + "\n");
+                console.log(title + ":\n" + err + "\n");
             });
             this.on("end", function() {
-                var stats = this.stats;
-                console.log("Tests passed: " + stats.passes);
-                console.log("Tests failed: " + stats.failures);
-                console.log("Total tests:  " + stats.tests);
-                console.log("Runtime (ms): " + stats.duration);
                 window.phantomComplete = true;
-                window.phantomResults = {
-                    failed: stats.failures
-                };
+                window.phantomResults = this.stats;
             });
-        }).call(window.Mocha.Runner.prototype);
+        }).call(/* new version */ ((window.Mocha && window.Mocha.Runner) || /* old version */ window.mocha.Runner).prototype);
 
         window.phantomAttached = true;
     });
@@ -95,7 +88,14 @@ page.open(url, function(success) {
 
         setInterval(function() {
             if (page.evaluate(function() {return window.phantomComplete;})) {
-                var failures = page.evaluate(function() {return window.phantomResults.failed;});
+                var failures = page.evaluate(function() {
+                    var stats = window.phantomResults;
+                    console.log("Tests passed: " + stats.passes);
+                    console.log("Tests failed: " + stats.failures);
+                    console.log("Total tests:  " + stats.tests);
+                    console.log("Runtime (ms): " + stats.duration);
+                    return stats.failures;
+                });
                 phantom.exit(failures);
             }
         }, 250);
