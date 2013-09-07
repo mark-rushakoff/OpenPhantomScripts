@@ -56,7 +56,7 @@ function isPhantomAttached() {
 page.onResourceReceived = function() {
     //attach the end event handler to all Mocha.Runner instances
     page.evaluate(function() {
-        if (!(window.Mocha && Mocha.Runner && !window.phantomAttached)) return;
+        if (!window.Mocha || window.phantomAttached) return;
 
         (function () {
             this.on("fail", function (test) {
@@ -76,7 +76,7 @@ page.onResourceReceived = function() {
                     failed: stats.failures
                 };
             });
-        }).call(Mocha.Runner.prototype);
+        }).call(window.Mocha.Runner.prototype);
 
         window.phantomAttached = true;
     });
