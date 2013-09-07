@@ -56,17 +56,18 @@ function isPhantomAttached() {
 page.onResourceReceived = function() {
     //attach the done callback to QUnit if not already done.
     page.evaluate(function() {
-        if (window.QUnit && !window.phantomAttached) {
-            window.QUnit.config.done.push(function(obj) {
-                console.log("Tests passed: " + obj.passed);
-                console.log("Tests failed: " + obj.failed);
-                console.log("Total tests:  " + obj.total);
-                console.log("Runtime (ms): " + obj.runtime);
-                window.phantomComplete = true;
-                window.phantomResults = obj;
-            });
-            window.phantomAttached = true;
-        }
+        if (!window.QUnit || window.phantomAttached) return;
+
+        QUnit.config.done.push(function(obj) {
+            console.log("Tests passed: " + obj.passed);
+            console.log("Tests failed: " + obj.failed);
+            console.log("Total tests:  " + obj.total);
+            console.log("Runtime (ms): " + obj.runtime);
+            window.phantomComplete = true;
+            window.phantomResults = obj;
+        });
+        
+        window.phantomAttached = true;
     });
 }
 
