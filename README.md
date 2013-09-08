@@ -47,13 +47,6 @@ PhantomJS supports asynchronous calls out of the box, but has some default secur
 
 To use this code just follow the instructions and replace the necessary line with that line. Change qunit to jasmine or mocha if necessary and modify the test/test.html path to point to your test file.
 
-## Known issues
-
-The scripts hook into Phantom's resourceReceived event, which is triggered after every resource load (e.g. script tag, image tags); in that hook, we check for the presence of the test object (`window.QUnit`, `window.jasmine`, or `window.mocha`).
-If `qunit.js` or `jasmine.js` or `mocha.js` is too close to one of the last resources in the page, the script will not have been evaluated by the time that the `resourceReceived` event is triggered, resulting in Phantom never attaching the watcher defined in the script (see [Issue #1](https://github.com/mark-rushakoff/OpenPhantomScripts/issues/1)).
-
-`phantom-mocha.js` depends on the test script calling `mocha.run` directly, which is probably but not necessarily always the case.
-
 ## Alternatives
 
 If OpenPhantomScripts isn't quite the right tool for your job, check out these alternatives:
