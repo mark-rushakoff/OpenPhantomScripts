@@ -73,6 +73,7 @@ page.onResourceReceived = function() {
                         } else if (results.passed()) {
                             this.numPassed++;
                         } else {
+                            console.log('\n'+spec.suite.description+':\n  Failed: '+spec.description+'\n');
                             this.numFailed++;
                         }
                     },
